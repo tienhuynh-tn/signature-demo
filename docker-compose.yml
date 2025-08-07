@@ -1,8 +1,7 @@
-version: '3.8'
-
 services:
   oracle-db:
     image: gvenzl/oracle-xe:21.3.0
+    container_name: oracle-db
     ports:
       - "1521:1521"
     environment:
@@ -11,6 +10,20 @@ services:
     volumes:
       - oracle_data:/opt/oracle/oradata
       - ./import.sql:/docker-entrypoint-initdb.d/import.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "lsnrctl status | grep -q 'PORT=1521'"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+
+  sftp:
+    image: atmoz/sftp:latest
+    container_name: sftp
+    ports:
+      - "2222:22"
+    command: foo:pass:::upload
+    volumes:
+      - ./sftp-data:/home/foo/upload
 
 volumes:
   oracle_data:

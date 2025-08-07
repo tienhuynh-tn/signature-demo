@@ -35,3 +35,17 @@ springdoc:
       enabled: false
     persist-authorization: true
   paths-to-match: /v1/**
+
+sftp:
+  host: localhost
+  port: 2222
+  username: foo
+  password: pass
+  remote-dir: /home/foo/upload
+  connect-timeout-ms: 8000
+  session-timeout-ms: 10000
+sync:
+  sftp:
+    batch-size: 100
+    enabled: true
+    cron: "0 */1 * * * *"         # every minute (optional)

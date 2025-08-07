@@ -28,7 +28,7 @@
 
     <dependencies>
 
-        <!-- ✅ Spring Boot Core -->
+        <!-- Spring Boot Core -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
@@ -54,35 +54,42 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- ✅ Database -->
+        <!-- SFTP -->
+        <dependency>
+            <groupId>com.github.mwiede</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.2.16</version>
+        </dependency>
+
+        <!-- Database -->
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>
             <artifactId>ojdbc17</artifactId>
             <version>${ojdbc.version}</version>
         </dependency>
 
-        <!-- ✅ Camunda BPM (Embedded Engine) -->
+        <!-- Camunda BPM -->
         <dependency>
             <groupId>io.camunda.spring</groupId>
             <artifactId>spring-boot-starter-camunda</artifactId>
             <version>8.5.8</version>
         </dependency>
 
-        <!-- ✅ JWT (Optional) -->
+        <!-- JWT (Optional) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt</artifactId>
             <version>${jjwt.version}</version>
         </dependency>
 
-        <!-- ✅ Swagger/OpenAPI -->
+        <!-- Swagger/OpenAPI -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
             <version>${springdoc.version}</version>
         </dependency>
 
-        <!-- ✅ Lombok -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -90,7 +97,7 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- ✅ Test -->
+        <!-- Test -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -98,10 +105,8 @@
         </dependency>
     </dependencies>
 
-    <!-- Optional overrides to silence security scan false positives -->
     <dependencyManagement>
         <dependencies>
-            <!-- Pin Spring Web for GHSA-rc42-6c7j-7h5r workaround -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>

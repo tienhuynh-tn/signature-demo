@@ -14,4 +14,5 @@ public interface ApplicationRepository extends JpaRepository<Application, UUID> 
     @Query("SELECT a FROM Application a JOIN FETCH a.user")
     List<Application> findAllWithUsers();
 
+    List<Application> findTop100ByStatusOrderByCreatedDateAsc(Application.Status status);
 }
