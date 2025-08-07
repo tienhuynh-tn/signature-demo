@@ -19,7 +19,7 @@ spring:
     database-platform: org.hibernate.dialect.OracleDialect  # or Oracle12cDialect
     properties:
       hibernate.temp.use_jdbc_metadata_defaults: false
-    defer-datasource-initialization: true
+#    defer-datasource-initialization: true
   sql:
     init:
       mode: always
