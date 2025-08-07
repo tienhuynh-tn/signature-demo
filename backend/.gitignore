@@ -1,0 +1,63 @@
+# === Java / Maven ===
+target/
+*.class
+*.log
+*.jar
+*.war
+*.ear
+
+# === Maven Wrapper ===
+.mvn/
+!**/mvnw
+!**/mvnw.cmd
+
+# === IntelliJ IDEA ===
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+*.swp
+
+# === OS Generated ===
+.DS_Store
+Thumbs.db
+
+# === Environment / Secrets ===
+*.env
+.env.*
+*.local
+*.secret
+application-*.yml
+
+# === Logs ===
+logs/
+*.log
+*.out
+
+# === Docker ===
+docker-compose.override.yml
+**/docker-data/
+**/sftp-data/
+
+# === Database Files ===
+*.mv.db
+*.h2.db
+oracle-data/
+
+# === Spring Boot Specific ===
+.spring-boot-devtools.properties
+import.sql
+
+# === Postman / API Testing ===
+*.postman_collection.json
+
+# === Zip & Build Artifacts ===
+*.zip
+*.tar.gz
+
+# === VSCode (if used) ===
+.vscode/
+
+# === Others ===
+/tmp/

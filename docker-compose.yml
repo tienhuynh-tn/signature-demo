@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  oracle-db:
+    image: gvenzl/oracle-xe:21.3.0
+    ports:
+      - "1521:1521"
+    environment:
+      ORACLE_PASSWORD: oracle
+      ORACLE_DATABASE: XEPDB1
+    volumes:
+      - oracle_data:/opt/oracle/oradata
+      - ./import.sql:/docker-entrypoint-initdb.d/import.sql:ro
+
+volumes:
+  oracle_data:
