@@ -47,7 +47,6 @@ oracle-data/
 
 # === Spring Boot Specific ===
 .spring-boot-devtools.properties
-import.sql
 
 # === Postman / API Testing ===
 *.postman_collection.json
