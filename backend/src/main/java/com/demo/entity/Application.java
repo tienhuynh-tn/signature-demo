@@ -28,8 +28,7 @@ public class Application {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @Lob
-    @Column(length = 100000)
+    @Column(columnDefinition = "clob")
     private String signatureImage;
 
     @Enumerated(EnumType.STRING)

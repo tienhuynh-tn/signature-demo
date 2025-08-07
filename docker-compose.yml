@@ -6,15 +6,19 @@ services:
       - "1521:1521"
     environment:
       ORACLE_PASSWORD: oracle
-      ORACLE_DATABASE: XEPDB1
+      APP_USER: system
+      APP_USER_PASSWORD: oracle
+      ORACLE_DATABASE: XE
+    restart: unless-stopped
     volumes:
       - oracle_data:/opt/oracle/oradata
-      - ./import.sql:/docker-entrypoint-initdb.d/import.sql:ro
+      - ./docker/oracle/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "lsnrctl status | grep -q 'PORT=1521'"]
-      interval: 10s
-      timeout: 5s
-      retries: 30
+      test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XE | grep -q 1" ]
+      interval: 20s
+      timeout: 10s
+      retries: 15
+      start_period: 120s
 
   sftp:
     image: atmoz/sftp:latest
@@ -24,6 +28,36 @@ services:
     command: foo:pass:::upload
     volumes:
       - ./sftp-data:/home/foo/upload
+
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: signature-demo-be
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      # Spring server
+      SERVER_PORT: 8081
+      # Oracle (service name syntax!)
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XE
+      SPRING_DATASOURCE_USERNAME: system
+      SPRING_DATASOURCE_PASSWORD: oracle
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      # SFTP
+      SFTP_HOST: sftp
+      SFTP_PORT: 22
+      SFTP_USERNAME: foo
+      SFTP_PASSWORD: pass
+      SFTP_REMOTE_DIR: /home/foo/upload
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "60000"
+    ports:
+      - "8081:8081"
+    restart: unless-stopped
+    command: [ "/bin/sh", "-c", "dockerize -wait tcp://oracle-db:1521 -timeout 6m && java -jar /app/signature-demo-be.jar" ]
 
 volumes:
   oracle_data:
