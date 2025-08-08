@@ -2,7 +2,7 @@ package com.demo.dto;
 
 public class StartInstanceRequest {
     private String processId;
-    private String applicationId;
+    private String signatureId;
 
     public String getProcessId() {
         return processId;
@@ -12,11 +12,11 @@ public class StartInstanceRequest {
         this.processId = processId;
     }
 
-    public String getApplicationId() {
-        return applicationId;
+    public String getSignatureId() {
+        return signatureId;
     }
 
-    public void setApplicationId(String applicationId) {
-        this.applicationId = applicationId;
+    public void setSignatureId(String signatureId) {
+        this.signatureId = signatureId;
     }
 }

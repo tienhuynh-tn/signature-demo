@@ -24,7 +24,7 @@ public class ProcessController {
     @PostMapping("/start")
     public ResponseEntity<String> startProcessInstance(@RequestBody StartInstanceRequest request) {
         try {
-            Map<String, Object> variables = Map.of("applicationId", request.getApplicationId());
+            Map<String, Object> variables = Map.of("signatureId", request.getSignatureId());
 
             ProcessInstanceEvent instanceEvent = zeebeClient
                     .newCreateInstanceCommand()
