@@ -2,34 +2,26 @@ server:
   port: 8081
 
 spring:
-#  datasource:
-#    url: jdbc:oracle:thin:@localhost:1521/XE
-#    username: APPLICATION_DEMO
-#    password: apppassword
-#    driver-class-name: oracle.jdbc.OracleDriver
   datasource:
     url: jdbc:oracle:thin:@oracle-db:1521/XE
-    username: system
-    password: oracle
+    username: APPLICATION_DEMO
+    password: apppassword123
     driver-class-name: oracle.jdbc.OracleDriver
   jpa:
     hibernate:
       ddl-auto: update
     show-sql: true
-    database-platform: org.hibernate.dialect.OracleDialect  # or Oracle12cDialect
+    database-platform: org.hibernate.dialect.OracleDialect
     properties:
       hibernate.temp.use_jdbc_metadata_defaults: false
-#    defer-datasource-initialization: true
   sql:
     init:
-      mode: always
+      mode: never
 
 camunda:
-  bpm:
-    authorization:
-      enabled: false
-  webapp:
-    index-redirect-enabled: false
+  client:
+    zeebe:
+      gateway-url: http://zeebe:26500
 camunda.bpm:
   admin-user:
     id: demo

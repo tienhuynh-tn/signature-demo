@@ -5,20 +5,28 @@ services:
     ports:
       - "1521:1521"
     environment:
-      ORACLE_PASSWORD: oracle
-      APP_USER: system
-      APP_USER_PASSWORD: oracle
+      ORACLE_PASSWORD: oracle123
       ORACLE_DATABASE: XE
+      APP_USER: APPLICATION_DEMO
+      APP_USER_PASSWORD: apppassword123
     restart: unless-stopped
     volumes:
       - oracle_data:/opt/oracle/oradata
-      - ./docker/oracle/init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
     healthcheck:
       test: [ "CMD-SHELL", "echo 'SELECT 1 FROM DUAL;' | sqlplus -s system/oracle@localhost:1521/XE | grep -q 1" ]
       interval: 20s
       timeout: 10s
       retries: 15
       start_period: 120s
+
+  zeebe:
+    image: camunda/zeebe:8.5.0
+    container_name: zeebe
+    environment:
+      ZEEBE_BROKER_NETWORK_ADVERTISEDHOST: zeebe
+    ports:
+      - "26500:26500"   # gRPC gateway
+    restart: unless-stopped
 
   sftp:
     image: atmoz/sftp:latest
@@ -35,25 +43,27 @@ services:
       dockerfile: Dockerfile
     container_name: signature-demo-be
     depends_on:
+      zeebe:
+        condition: service_started
       oracle-db:
         condition: service_healthy
     environment:
-      # Spring server
+      # Spring
       SERVER_PORT: 8081
-      # Oracle (service name syntax!)
+      # Oracle (service name, not localhost)
       SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XE
       SPRING_DATASOURCE_USERNAME: system
       SPRING_DATASOURCE_PASSWORD: oracle
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
-      # SFTP
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "60000"
+      # SFTP overrides (so app.yml localhost won’t bite)
       SFTP_HOST: sftp
       SFTP_PORT: 22
       SFTP_USERNAME: foo
       SFTP_PASSWORD: pass
       SFTP_REMOTE_DIR: /home/foo/upload
-      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "60000"
     ports:
       - "8081:8081"
     restart: unless-stopped
