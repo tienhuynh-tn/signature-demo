@@ -3,6 +3,7 @@ package com.demo.service;
 import io.camunda.zeebe.client.ZeebeClient;
 import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ public class ZebeeService {
 
     private final ZeebeClient zeebeClient;
 
-    public ZebeeService(ZeebeClient zeebeClient) {
+    public ZebeeService(@Qualifier("myZeebeClient") ZeebeClient zeebeClient) {
         this.zeebeClient = zeebeClient;
     }
 

@@ -18,18 +18,6 @@ spring:
     init:
       mode: never
 
-camunda:
-  client:
-    zeebe:
-      gateway-url: http://zeebe:26500
-camunda.bpm:
-  admin-user:
-    id: demo
-    password: demo
-    firstName: Demo
-  authorization:
-    enabled: false
-
 springdoc:
   api-docs:
     path: /v1/api-docs
