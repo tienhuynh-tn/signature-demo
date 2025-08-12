@@ -60,6 +60,12 @@
             <version>0.2.16</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.github.mwiede</groupId>
+            <artifactId>jsch</artifactId>
+            <version>0.2.16</version>
+        </dependency>
+
         <!-- Database -->
         <dependency>
             <groupId>com.oracle.database.jdbc</groupId>

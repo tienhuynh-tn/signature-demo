@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.List;
 
 @Service
@@ -22,22 +22,21 @@ public class SftpSyncServiceImpl implements SftpSyncService {
     @Transactional
     @Override
     public int syncCreatedOnce() {
-        int batchSize = Integer.parseInt(env.getProperty("sync.sftp.batch-size", "100"));
         List<Application> batch = appRepo.findTop100ByStatusOrderByCreatedDateAsc(Application.Status.CREATED);
 
         int success = 0;
         for (Application app : batch) {
             try {
-                // Option A: Upload raw Base64 (simple; downstream can decode)
-                byte[] bytes = app.getSignatureImage().getBytes(StandardCharsets.UTF_8);
-                String remoteName = app.getId().toString() + ".b64";
+                // If stored as data URI, strip the header
+                String b64 = app.getSignatureImage();
+                if (b64 != null && b64.startsWith("data:image")) {
+                    b64 = b64.substring(b64.indexOf(',') + 1);
+                }
 
-                // Option B: Decode and upload image bytes (uncomment if needed)
-                // byte[] bytes = Base64.getDecoder().decode(app.getSignatureImage());
-                // String remoteName = app.getId().toString() + ".png";
+                byte[] bytes = Base64.getDecoder().decode(b64);
+                String remoteName = app.getId() + ".png"; // or .jpg based on content
 
                 sftpClient.uploadBytes(bytes, remoteName);
-
                 app.setStatus(Application.Status.SUCCESS);
                 success++;
             } catch (Exception ex) {
@@ -45,7 +44,6 @@ public class SftpSyncServiceImpl implements SftpSyncService {
                 app.setStatus(Application.Status.FAILED);
             }
         }
-        // persist all status changes
         appRepo.saveAll(batch);
         return success;
     }
