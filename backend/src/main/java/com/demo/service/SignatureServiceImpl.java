@@ -23,6 +23,7 @@ public class SignatureServiceImpl implements SignatureService {
     private final ApplicationRepository applicationRepository;
     private final ConfigRepository configRepository;
     private final RestTemplate restTemplate;
+    private final ZebeeService zebeeService;
 
     @Override
     public String uploadSignature(SignatureUploadRequest request) {
@@ -31,7 +32,10 @@ public class SignatureServiceImpl implements SignatureService {
         app.setUser(User.builder().id(request.getUserId()).build());
         app.setStatus(Status.CREATED);
         applicationRepository.save(app);
+
         // TODO: Trigger Camunda here
+        zebeeService.startNewInstance("Start", app.getId().toString());
+
         return "Uploaded";
     }
 
@@ -60,6 +64,7 @@ public class SignatureServiceImpl implements SignatureService {
             app.setStatus(Status.PENDING);
             applicationRepository.save(app);
             // TODO: Trigger Camunda here
+            zebeeService.sendMessageEvent("Msg_StaffReviewed", app.getId().toString());
             return "Approval requested";
         }
         // TODO: Trigger Camunda here
