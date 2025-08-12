@@ -1,17 +1,13 @@
-package com.demo.job;
+package com.demo.service;
 
-import com.demo.dto.AIResult;
-import com.demo.service.SftpSyncService;
-import com.demo.service.SignatureService;
-import com.demo.service.ZebeeService;
-import io.camunda.zeebe.client.ZeebeClient;
+import com.demo.dto.AIResponse;
 import io.camunda.zeebe.client.api.response.ActivatedJob;
-import io.camunda.zeebe.client.api.response.ProcessInstanceEvent;
 import io.camunda.zeebe.client.api.worker.JobClient;
 import io.camunda.zeebe.spring.client.annotation.JobWorker;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -22,12 +18,12 @@ public class SignatureMainProcess {
 
     private final ZebeeService zebeeService;
     private final SftpSyncService sftpSyncService;
-    private final SignatureService signatureService;
+    private final AIService aiService;
 
-    public SignatureMainProcess(ZebeeService zebeeService, SftpSyncService sftpSyncService, SignatureService signatureService) {
+    public SignatureMainProcess(ZebeeService zebeeService, SftpSyncService sftpSyncService, SignatureService signatureService, AIService aiService) {
         this.zebeeService = zebeeService;
         this.sftpSyncService = sftpSyncService;
-        this.signatureService = signatureService;
+        this.aiService = aiService;
     }
 
     @JobWorker(type = "Type_UploadFile")
@@ -68,13 +64,13 @@ public class SignatureMainProcess {
     }
 
     @JobWorker(type = "Type_CheckSignature")
-    public void checkSignature(JobClient jobClient, final ActivatedJob activatedJob) {
+    public void checkSignature(JobClient jobClient, final ActivatedJob activatedJob) throws IOException {
         final Map<String, Object> variables = activatedJob.getVariablesAsMap();
         String appId = getAppIdFromVariable(variables);
         UUID appUUID = UUID.fromString(appId);
-        Object response = signatureService.approveRequest(appUUID);
+        AIResponse response = aiService.checkSimilarity(appUUID);
         final Map<String, Object> variableResponse = new HashMap<>();
-        variableResponse.put("isMatch", true);
+        variableResponse.put("isMatch", response.getResult());
         jobClient.newCompleteCommand(activatedJob.getKey()).variables(variableResponse).send().join();
     }
 

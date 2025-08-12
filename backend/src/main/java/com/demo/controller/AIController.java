@@ -1,22 +1,26 @@
 package com.demo.controller;
 
-import com.demo.dto.SignatureCheckRequest;
-import com.demo.dto.SignatureCheckResponse;
+import com.demo.dto.AIRequest;
+import com.demo.dto.AIResponse;
+import com.demo.service.AIService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Random;
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/v1/ai")
+@RequiredArgsConstructor
 public class AIController {
 
+    private final AIService aiService;
+
     @PostMapping("/signature-check")
-    public SignatureCheckResponse checkSimilarity(@RequestBody SignatureCheckRequest request) {
-        // Later, compare sourceImage vs targetImage
-        double score = 0.5 + new Random().nextDouble() * 0.5; // 0.5 - 1.0
-        return new SignatureCheckResponse(score);
+    public AIResponse checkSimilarity(@RequestBody @Valid AIRequest request) throws IOException {
+        return aiService.checkSimilarity(request.getApplicationId());
     }
 }

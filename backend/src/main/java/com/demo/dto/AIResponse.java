@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SignatureCheckRequest {
-    private String sourceImage;
-    private String targetImage;
+public class AIResponse {
+    private String result;
+    private Double score;
 }

@@ -10,6 +10,6 @@ public interface SignatureService {
     String uploadSignature(SignatureUploadRequest request);
     Object getSignatureDetails(UUID applicationId);
     String requestApproval(UUID applicationId);
-    Object approveRequest(UUID applicationId);
+    String review(UUID applicationId, String action);
     List<SignatureResponse> getAllSignatures(int page, int size);
 }

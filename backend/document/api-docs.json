@@ -11,6 +11,68 @@
     }
   ],
   "paths": {
+    "/v1/sync/sftp": {
+      "post": {
+        "tags": [
+          "sftp-sync-controller"
+        ],
+        "operationId": "trigger",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "/": {
+                "schema": {
+                  "type": "object",
+                  "additionalProperties": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/signatures/{applicationId}/review": {
+      "post": {
+        "tags": [
+          "signature-controller"
+        ],
+        "operationId": "review",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          {
+            "name": "action",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "/": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/v1/signatures/{applicationId}/request-approval": {
       "post": {
         "tags": [
@@ -32,38 +94,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
-                "schema": {
-                  "type": "object"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/v1/signatures/{applicationId}/approve": {
-      "post": {
-        "tags": [
-          "signature-controller"
-        ],
-        "operationId": "approveRequest",
-        "parameters": [
-          {
-            "name": "applicationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
+              "/": {
                 "schema": {
                   "type": "object"
                 }
@@ -93,7 +124,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "/": {
                 "schema": {
                   "type": "object"
                 }
@@ -113,7 +144,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SignatureCheckRequest"
+                "$ref": "#/components/schemas/AIRequest"
               }
             }
           },
@@ -123,9 +154,9 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "/": {
                 "schema": {
-                  "$ref": "#/components/schemas/SignatureCheckResponse"
+                  "$ref": "#/components/schemas/AIResponse"
                 }
               }
             }
@@ -143,7 +174,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "/": {
                 "schema": {
                   "type": "string"
                 }
@@ -185,7 +216,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "/": {
                 "schema": {
                   "type": "array",
                   "items": {
@@ -219,7 +250,7 @@
           "200": {
             "description": "OK",
             "content": {
-              "*/*": {
+              "/": {
                 "schema": {
                   "type": "object"
                 }
@@ -244,20 +275,21 @@
           }
         }
       },
-      "SignatureCheckRequest": {
+      "AIRequest": {
         "type": "object",
         "properties": {
-          "sourceImage": {
-            "type": "string"
-          },
-          "targetImage": {
-            "type": "string"
+          "applicationId": {
+            "type": "string",
+            "format": "uuid"
           }
         }
       },
-      "SignatureCheckResponse": {
+      "AIResponse": {
         "type": "object",
         "properties": {
+          "result": {
+            "type": "string"
+          },
           "score": {
             "type": "number",
             "format": "double"

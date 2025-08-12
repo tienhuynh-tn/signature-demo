@@ -34,9 +34,12 @@ public class SignatureController {
         return ResponseEntity.ok(signatureService.requestApproval(applicationId));
     }
 
-    @PostMapping("/{applicationId}/approve")
-    public ResponseEntity<?> approveRequest(@PathVariable UUID applicationId) {
-        return ResponseEntity.ok(signatureService.approveRequest(applicationId));
+    @PostMapping("/{applicationId}/review")
+    public ResponseEntity<?> review(
+            @PathVariable UUID applicationId,
+            @RequestParam String action
+    ) {
+        return ResponseEntity.ok(signatureService.review(applicationId, action));
     }
 
     @GetMapping

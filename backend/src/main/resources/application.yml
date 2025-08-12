@@ -1,9 +1,10 @@
 server:
-  port: 8081
+  port: 7070
 
 spring:
   datasource:
     url: jdbc:oracle:thin:@//oracle-db:1521/XE
+#    url: jdbc:oracle:thin:@localhost:1521/XE
     username: APPLICATION_DEMO
     password: App#12345a
     driver-class-name: oracle.jdbc.OracleDriver

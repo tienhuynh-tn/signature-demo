@@ -7,6 +7,7 @@ import com.demo.entity.User;
 import com.demo.repository.ApplicationRepository;
 import com.demo.repository.ConfigRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -72,31 +73,14 @@ public class SignatureServiceImpl implements SignatureService {
     }
 
     @Override
-    public Object approveRequest(UUID applicationId) {
+    public String review(UUID applicationId, String action) {
         Application app = applicationRepository.findById(applicationId)
                 .orElseThrow(() -> new IllegalArgumentException("Application not found"));
 
-        SignatureCheckRequest aiRequest = new SignatureCheckRequest(app.getSignatureImage(), "target-image"); // can be fixed or dynamic
-
-        String aiUrl = "http://localhost:8081/v1/ai/signature-check";
-        SignatureCheckResponse aiResponse = restTemplate.postForObject(aiUrl, aiRequest, SignatureCheckResponse.class);
-        if (aiResponse == null) throw new IllegalStateException("AI service failed");
-
-        double score = aiResponse.getScore();
-
-        double threshold = configRepository.findAll().stream()
-                .filter(c -> "SIGNATURE_THRESHOLD".equals(c.getCode()))
-                .findFirst()
-                .map(c -> Double.parseDouble(c.getValue()))
-                .orElse(0.8);
-
-        boolean isMatch = score >= threshold;
-        app.setStatus(isMatch ? Status.APPROVED : Status.REJECTED);
+        app.setStatus(StringUtils.equalsAnyIgnoreCase(action, "approved") ? Status.APPROVED : Status.REJECTED);
         applicationRepository.save(app);
 
-        // TODO: Send response to Camunda
-
-        return new AIResult(isMatch ? "match" : "not match", score);
+        return String.format("Application %s successfully %s", applicationId, action);
     }
 
     @Override

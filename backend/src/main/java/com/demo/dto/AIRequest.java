@@ -4,10 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.UUID;
+
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public class AIResult {
-    private String result;
-    private Double score;
+@AllArgsConstructor
+public class AIRequest {
+    private UUID applicationId;
 }
