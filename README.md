@@ -21,26 +21,37 @@ A Java Spring Boot backend demo project integrating:
 
 ## 🚀 How to Run the Project
 
-### 1. Clone the repo
-```bash
-git clone <your-repo-url>
-cd signature-demo
-```
+### Runbook
 
-### 2. Run Docker (Oracle DB + SFTP)
 ```bash
-docker-compose up --build
-```
+docker compose up -d oracle-db
 
-- Oracle DB → `localhost:1521`, SID: `XEPDB1`, user: `system`, pass: `oracle`
-- SFTP Server → `sftp://foo:pass@localhost:2222`, folder: `/upload`
+docker exec -it oracle-db bash -lc "sqlplus -L -S system/oracle123@127.0.0.1:1521/XE <<'SQL'
+WHENEVER SQLERROR EXIT 1
 
-### 3. Run Spring Boot App
-Either from your IDE (IntelliJ) or using Maven:
-```bash
-./mvnw spring-boot:run
+CREATE USER APPLICATION_DEMO IDENTIFIED BY \"App#12345a\"
+  DEFAULT TABLESPACE USERS
+  TEMPORARY TABLESPACE TEMP
+  QUOTA UNLIMITED ON USERS;
+
+GRANT CREATE SESSION, CREATE TABLE, CREATE SEQUENCE, CREATE VIEW,
+      CREATE PROCEDURE, CREATE TRIGGER, CREATE TYPE TO APPLICATION_DEMO;
+
+ALTER USER APPLICATION_DEMO ACCOUNT UNLOCK;
+
+EXIT
+SQL"
+
+docker compose up -d sftp backend
+
+docker exec -it oracle-db bash
+
+sqlplus APPLICATION_DEMO/\"App#12345a\"@127.0.0.1:1521/XE
+
+# Insert data line-by-line from data.sql
+# (Run inside sqlplus as APPLICATION_DEMO)
+/src/main/resources/data.sql
 ```
-Swagger available at: [http://localhost:8080/v1/swagger-ui.html](http://localhost:8080/v1/swagger-ui.html)
 
 ---
 
