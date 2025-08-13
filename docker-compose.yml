@@ -1,3 +1,4 @@
+
 services:
   oracle-db:
     image: gvenzl/oracle-xe:21.3.0
@@ -27,35 +28,35 @@ services:
     volumes:
       - ./sftp-data:/home/foo/upload
 
-#  backend:
-#    build:
-#      context: ./backend/
-#      dockerfile: Dockerfile
-#    container_name: signature-demo-be
-#    depends_on:
-#      oracle-db:
-#        condition: service_healthy
-#    environment:
-#      # Spring
-#      SERVER_PORT: 7070
-#      # Oracle (service name, not localhost)
-#      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XE
-#      SPRING_DATASOURCE_USERNAME: APPLICATION_DEMO
-#      SPRING_DATASOURCE_PASSWORD: App#12345a
-#      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "60000"
-#      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
-#      SPRING_JPA_HIBERNATE_DDL_AUTO: update
-#      SPRING_JPA_SHOW_SQL: "true"
-#      # SFTP overrides (so app.yml localhost won’t bite)
-#      SFTP_HOST: sftp
-#      SFTP_PORT: 22
-#      SFTP_USERNAME: foo
-#      SFTP_PASSWORD: pass
-#      SFTP_REMOTE_DIR: /home/foo/upload
-#    ports:
-#      - "7070:7070"
-#    restart: unless-stopped
-#    command: [ "/bin/sh", "-c", "dockerize -wait tcp://oracle-db:1521 -timeout 6m && java -jar /app/signature-demo-be.jar" ]
+  backend:
+    build:
+      context: ./backend/
+      dockerfile: Dockerfile
+    container_name: signature-demo-be
+    depends_on:
+      oracle-db:
+        condition: service_healthy
+    environment:
+      # Spring
+      SERVER_PORT: 7070
+      # Oracle (service name, not localhost)
+      SPRING_DATASOURCE_URL: jdbc:oracle:thin:@//oracle-db:1521/XE
+      SPRING_DATASOURCE_USERNAME: APPLICATION_DEMO
+      SPRING_DATASOURCE_PASSWORD: App#12345a
+      SPRING_DATASOURCE_HIKARI_CONNECTION_TIMEOUT: "60000"
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: oracle.jdbc.OracleDriver
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      # SFTP overrides (so app.yml localhost won’t bite)
+      SFTP_HOST: sftp
+      SFTP_PORT: 22
+      SFTP_USERNAME: foo
+      SFTP_PASSWORD: pass
+      SFTP_REMOTE_DIR: /home/foo/upload
+    ports:
+      - "7070:7070"
+    restart: unless-stopped
+    command: [ "/bin/sh", "-c", "dockerize -wait tcp://oracle-db:1521 -timeout 6m && java -jar /app/signature-demo-be.jar" ]
 
 volumes:
   oracle_data:
