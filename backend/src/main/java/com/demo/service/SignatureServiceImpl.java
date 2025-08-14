@@ -5,16 +5,12 @@ import com.demo.entity.Application;
 import com.demo.entity.Application.Status;
 import com.demo.entity.User;
 import com.demo.repository.ApplicationRepository;
-import com.demo.repository.ConfigRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -22,8 +18,6 @@ import java.util.stream.Collectors;
 public class SignatureServiceImpl implements SignatureService {
 
     private final ApplicationRepository applicationRepository;
-    private final ConfigRepository configRepository;
-    private final RestTemplate restTemplate;
     private final ZebeeService zebeeService;
 
     @Override
@@ -32,6 +26,8 @@ public class SignatureServiceImpl implements SignatureService {
         app.setSignatureImage(request.getImageBase64());
         app.setUser(User.builder().id(request.getUserId()).build());
         app.setStatus(Status.CREATED);
+        app.setCreatedDate(LocalDateTime.now());
+        app.setCreatedBy("Staff");
         applicationRepository.save(app);
 
         // TODO: Trigger Camunda here
@@ -94,6 +90,10 @@ public class SignatureServiceImpl implements SignatureService {
 
         // Combine data from Application and UserRepository
         List<SignatureResponse> allResponses = applications.stream()
+                .sorted(Comparator.comparing(
+                        Application::getCreatedDate,
+                        Comparator.nullsFirst(Comparator.naturalOrder()) // null-safe sorting
+                ).reversed())
                 .map(app -> SignatureResponse.builder()
                         .applicationId(app.getId().toString())
                         .userId(app.getUser().getId().toString())

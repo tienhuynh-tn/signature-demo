@@ -1,4 +1,3 @@
-
 services:
   oracle-db:
     image: gvenzl/oracle-xe:21.3.0
@@ -22,11 +21,12 @@ services:
   sftp:
     image: atmoz/sftp:latest
     container_name: sftp
+    command: "foo:pass:1001:1001:upload"   # explicit UID:GID = 1001
     ports:
       - "2222:22"
-    command: foo:pass:::upload
     volumes:
-      - ./sftp-data:/home/foo/upload
+      - sftp_data:/home/foo/upload          # named volume (owned by container)
+    restart: unless-stopped
 
 #  backend:
 #    build:
@@ -60,3 +60,4 @@ services:
 
 volumes:
   oracle_data:
+  sftp_data:

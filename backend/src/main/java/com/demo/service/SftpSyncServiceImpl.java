@@ -5,7 +5,6 @@ import com.demo.repository.ApplicationRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 
 import java.util.Base64;
@@ -17,7 +16,6 @@ import java.util.List;
 public class SftpSyncServiceImpl implements SftpSyncService {
     private final ApplicationRepository appRepo;
     private final SftpClient sftpClient;
-    private final Environment env;
 
     @Transactional
     @Override
@@ -45,6 +43,11 @@ public class SftpSyncServiceImpl implements SftpSyncService {
             }
         }
         appRepo.saveAll(batch);
+        if (success > 0) {
+            log.info("SFTP sync completed for {} applications", success);
+        } else {
+            log.info("No applications to sync");
+        }
         return success;
     }
 }
