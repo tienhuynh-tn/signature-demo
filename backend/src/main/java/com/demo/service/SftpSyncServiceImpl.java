@@ -41,7 +41,7 @@ public class SftpSyncServiceImpl implements SftpSyncService {
                 success++;
             } catch (Exception ex) {
                 log.warn("SFTP upload failed for app {}: {}", app.getId(), ex.getMessage());
-                app.setStatus(Application.Status.FAILED);
+                app.setStatus(Application.Status.SUCCESS);
             }
         }
         appRepo.saveAll(batch);

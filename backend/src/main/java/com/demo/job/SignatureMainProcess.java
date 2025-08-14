@@ -28,7 +28,8 @@ public class SignatureMainProcess {
 
     @JobWorker(type = "Type_UploadFile")
     public void uploadFile(JobClient jobClient, final ActivatedJob activatedJob) {
-        sftpSyncService.syncCreatedOnce();
+        int response = sftpSyncService.syncCreatedOnce();
+        log.info("uploadFile response = {}", response);
         jobClient.newCompleteCommand(activatedJob.getKey()).send().join();
     }
 

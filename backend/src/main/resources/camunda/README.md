@@ -1,5 +1,7 @@
 # Camunda Platform 8
+http://localhost:7070/v1/swagger-ui/index.html
 http://localhost:26500
+docker compose -f docker-compose-core.yaml up -d
 This repository contains links to Camunda Platform 8 resources, the official release artifacts (binaries), and supporting config files for running Docker Compose as a local development option. 
 
 :warning: **Docker Compose is only recommended for local development.** :warning:

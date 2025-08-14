@@ -36,7 +36,7 @@ public class SignatureServiceImpl implements SignatureService {
 
         // TODO: Trigger Camunda here
         zebeeService.startNewInstance("Start", app.getId().toString());
-
+        zebeeService.sendMessageEvent("Msg_CustomerUpload", app.getId().toString());
         return "Uploaded";
     }
 
@@ -64,8 +64,6 @@ public class SignatureServiceImpl implements SignatureService {
             Application app = appOpt.get();
             app.setStatus(Status.PENDING);
             applicationRepository.save(app);
-            // TODO: Trigger Camunda here
-            zebeeService.sendMessageEvent("Msg_StaffReviewed", app.getId().toString());
             return "Approval requested";
         }
         // TODO: Trigger Camunda here
@@ -79,6 +77,9 @@ public class SignatureServiceImpl implements SignatureService {
 
         app.setStatus(StringUtils.equalsAnyIgnoreCase(action, "approved") ? Status.APPROVED : Status.REJECTED);
         applicationRepository.save(app);
+
+        // TODO: Trigger Camunda here
+        zebeeService.sendMessageEvent("Msg_ManagerApproved", app.getId().toString());
 
         return String.format("Application %s successfully %s", applicationId, action);
     }
