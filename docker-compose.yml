@@ -21,12 +21,11 @@ services:
   sftp:
     image: atmoz/sftp:latest
     container_name: sftp
-    command: "foo:pass:1001:1001:upload"   # explicit UID:GID = 1001
     ports:
       - "2222:22"
+    command: foo:pass:::upload
     volumes:
-      - sftp_data:/home/foo/upload          # named volume (owned by container)
-    restart: unless-stopped
+      - ./sftp-data:/home/foo/upload
 
 #  backend:
 #    build:
